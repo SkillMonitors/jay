@@ -13,20 +13,20 @@ def get(name, sym):
         d = yf.download(sym, period="12y", auto_adjust=False, progress=False)
         d.columns = d.columns.get_level_values(0); d[["Open","High","Low","Close"]].dropna().to_csv(f)
     d = pd.read_csv(f, index_col=0); d.index = pd.to_datetime(d.index.astype(str).str[:10]); return d[~d.index.duplicated()]
-def backtest(df, stopmode, sides, hold=5, cost=0.05):
+def backtest(df, stopmode, sides, hold=5, cost=0.05, years=10, confirm=True):
     m = lambda n: (df.High.rolling(n).max() + df.Low.rolling(n).min()) / 2
     T, K = m(9).values, m(26).values; A = ((m(9)+m(26))/2).shift(26).values; B = m(52).shift(26).values
     top, bot = np.fmax(A, B), np.fmin(A, B)
     tr_ = pd.concat([df.High-df.Low, (df.High-df.Close.shift()).abs(), (df.Low-df.Close.shift()).abs()], axis=1).max(axis=1)
     atr = tr_.rolling(14).mean().values
     O, H, L, C = (df[c].values for c in ("Open","High","Low","Close"))
-    start = np.searchsorted(df.index.values, (df.index.max() - pd.DateOffset(years=10)).to_datetime64())
+    start = np.searchsorted(df.index.values, (df.index.max() - pd.DateOffset(years=years)).to_datetime64())
     trades = []; i = start
     while i < len(df) - 1:
         i += 1
         if np.isnan(top[i]) or np.isnan(top[i-1]): continue
         side = None
-        if "long" in sides and C[i-1] < bot[i-1] and bot[i] <= C[i] <= top[i] and A[i] < B[i] and C[i] > T[i] and C[i] > K[i]: side = 1
+        if "long" in sides and C[i-1] < bot[i-1] and bot[i] <= C[i] <= top[i] and A[i] < B[i] and (not confirm or (C[i] > T[i] and C[i] > K[i])): side = 1
         elif "short" in sides and C[i-1] > top[i-1] and bot[i] <= C[i] <= top[i] and A[i] > B[i] and C[i] < T[i] and C[i] < K[i]: side = -1
         if side is None: continue
         ent = C[i]; sd = (stopmode * ent / 100) if stopmode != "atr" else 2 * atr[i]
