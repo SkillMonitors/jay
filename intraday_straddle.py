@@ -14,7 +14,8 @@ VX = pd.read_csv("indiavix.csv", index_col=0); VX.index = pd.to_datetime(VX.inde
 cand = []
 for y in range(2016, 2027):
     for mth in range(1, 13):
-        last = pd.Timestamp(y, mth, 1) + pd.offsets.MonthEnd(0); cand.append(("M", last - pd.Timedelta(days=(last.weekday() - 3) % 7)))
+        last = pd.Timestamp(y, mth, 1) + pd.offsets.MonthEnd(0); me = last - pd.Timedelta(days=(last.weekday() - 3) % 7)
+        if me < pd.Timestamp("2019-02-25"): cand.append(("M", me))     # monthly-only era; weekly expiries cover everything after
 wk = pd.Timestamp("2019-02-25")
 while wk < pd.Timestamp("2026-12-31"):
     wd = 3 if wk < pd.Timestamp("2025-09-01") else 1; cand.append(("W", wk + pd.Timedelta(days=wd))); wk += pd.Timedelta(days=7)
