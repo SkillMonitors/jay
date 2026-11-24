@@ -31,4 +31,5 @@ for th in (1.0, 1.5, 2.0, 3.0):
     print(f"  recovered to the (moving) Kijun: {len(td)} ({100*len(td)/len(r):.0f}%)")
     if len(t): print(f"  days to recover: avg {t.mean():.1f}, median {t.median():.0f}, p90 {t.quantile(.9):.0f}, max {t.max():.0f} | within 5d {100*(t<=5).sum()/len(r):.0f}%, 10d {100*(t<=10).sum()/len(r):.0f}%, 20d {100*(t<=20).sum()/len(r):.0f}%")
     print(f"  distance from drop close up to the 50% level: avg {r.to_level.mean():.2f}% | further fall after the drop before recovery/60d: avg {r.worst_before.mean():.1f}%, worst {r.worst_before.min():.1f}%")
+    if th == 1.0: r.to_csv(f"kijun_drop_events_1pct_{NAME}.csv", index=False)
     if th in (2.0,): print(r.to_string(index=False)); r.to_csv(f"kijun_drop_events_2pct_{NAME}.csv", index=False)
