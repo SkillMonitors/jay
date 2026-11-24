@@ -1,44 +1,47 @@
-# Zerodha Nifty straddle bot - with stop-loss and PANIC button
+# Zerodha Nifty expiry-day iron butterfly bot - PAPER TRADING first
 
-**Paper mode is the default. Nothing real is traded until you deliberately switch to live.**
-Not financial advice. Written and tested only against a simulated market (`tests/`), never against the real Zerodha API - read, run in paper mode for weeks, and check every number yourself before using real money.
+**Paper mode is the default: nothing real is traded.** Written and tested only against a *simulated* market (`tests/`, `demo.py`), never against the real Zerodha API. Not financial advice.
 
-## What it does
-At `entry_time` it sells the at-the-money Nifty call and put (same strike) and exits both legs on the **first** of:
-| Trigger | What happens |
-|---|---|
-| Combined premium to buy back >= entry x (1 + `stop_loss_pct`) (default 10%) | STOP-LOSS: buy back both legs |
-| Mark-to-market loss >= `max_daily_loss` rupees | MAX-LOSS exit |
-| Clock hits `exit_time` (default 14:15) | TIME exit |
-| You press PANIC | cancel all orders, close ALL positions in the account |
-| Quote feed fails 10 polls in a row | FAIL-SAFE exit (uses a market order) |
-| Only one leg fills at entry | other leg is closed at once, bot stops |
-| Any crash / Ctrl+C | emergency square-off, then exits |
+## The trade (what we backtested)
+On every Nifty **expiry day** (Tuesday weekly expiry from Sep 2025), at ~09:16:
+1. **BUY the two wings first**: call at K+200 and put at K-200 (K = nearest 50 strike to spot). `--style itm` gives your screenshot's version (call K-200, put K+200) - same payoff, more cash, less margin.
+2. **SELL the at-the-money call and put at K.**
+Size = `sets` x 2 lots on every leg (1 set = 2 lots = 130 qty at lot 65). **Start with 1 set.**
+Exit everything (shorts bought back first, then wings sold) on the first of: **stop-loss** (cost to close rises 10% of the premium collected on the short legs) - **max daily loss** (Rs15,000 default) - **time exit 15:15** - **PANIC** - **data failure** (10 missed price updates, uses a market order). If an entry order fails part-way, everything already filled is closed and the bot stops.
 
-## Four ways to panic (all do the same thing: cancel orders, buy back shorts first, then sell any longs, retry until the account is verified flat)
-1. **Browser button**: `http://127.0.0.1:8765` (local only) - big red button + live status.
-2. **File**: `touch PANIC` in the bot folder.
-3. **Second terminal / works even if the bot crashed**: `python panic.py` (type PANIC) or `python panic.py --yes`.
-4. **Ctrl+C** in the bot terminal.
-Last resort: Zerodha's own kill switch / the Kite app.
+## Try it right now with NO Zerodha account
+```
+python -m unittest discover -s tests -v     # 16 offline safety tests
+python demo.py            # simulated calm expiry day, exits 3:15
+python demo.py stop       # stop-loss firing
+python demo.py panic      # you press PANIC at 11:30 - shorts bought back before wings are sold
+python demo.py gap        # market jumps through the stop: the loss is bigger than 10% (gap risk)
+```
 
-## Setup (on YOUR computer or server, not in any chat)
+## Real paper trading (real quotes, fake orders)
+Needs the paid Kite Connect plan with market data. On YOUR machine (never paste keys into a chat):
 ```
 pip install -r requirements.txt
-export KITE_API_KEY=...  KITE_API_SECRET=...        # from your Kite Connect app; see .env.example
-python login.py                                      # every morning; paste the request_token ONLY into this terminal
+export KITE_API_KEY=...  KITE_API_SECRET=...          # see .env.example
+python login.py                                       # each morning; paste the request_token only into this terminal
 export KITE_ACCESS_TOKEN=$(cat .access_token)
-python bot.py                                        # PAPER: real quotes, fake orders (quotes need the paid Kite Connect data plan)
-python -m unittest discover -s tests -v              # offline tests, 13 scenarios
+python bot.py                                         # start before 09:15 on an expiry day; paper mode
+python summary.py                                     # after several expiries: win rate, avg per set, drawdown vs the backtest
 ```
-Live (only after weeks of paper trading): `export LIVE_TRADING=YES_I_UNDERSTAND_THIS_USES_REAL_MONEY` then `python bot.py --live` (also asks you to type YES).
-Useful flags: `--lots 1  --offset 0  --sl 10  --max-loss 5000  --entry 09:16  --exit 14:15  --any-day` (default trades expiry days only).
+Every trade is appended to `logs/paper_journal.csv` (centre strike, net credit, reason, gross P&L, estimated costs, est. net).
+**Go/no-go rule:** after at least 20-30 expiries compare `python summary.py` with the backtest (~Rs2,700 net per set per expiry, 53-58% wins). If your paper average is far below that, real spreads/slippage are eating the edge - do NOT go live.
 
-## Honest limits you must know
-* **A stop-loss is not a guarantee.** If the market jumps past the stop between two price checks, you exit at the first available price - the loss can be bigger than 10% (there is a test showing this).
-* Stop uses the **ask** price (what you would pay to buy back). Illiquid/wide quotes can trigger it early.
-* The backtests behind this strategy used *modelled* option prices. Real fills, spreads and margin will differ. A naked short straddle needs large margin and can lose a lot in one fast move.
-* `MIS` positions are auto-squared-off by Zerodha late in the day (extra charges apply if it happens); keep `exit_time` well before that.
-* SEBI/broker rules for API order placement (e.g. static IP, algo registration) may apply to you - check Zerodha's current terms.
-* The panic button closes **everything** in the account, not just this bot's trades.
-* Run it on a machine that stays on and online. If the bot process dies, positions stay open - use `panic.py` or the Kite app.
+## Four ways to PANIC (cancel orders, buy back shorts first, then sell wings, retry until verified flat)
+1. Browser: http://127.0.0.1:8765 (local only) - big red button + live status.  2. `touch PANIC` in the bot folder.
+3. `python panic.py` (type PANIC) or `--yes` - works even if the bot crashed.  4. Ctrl+C in the bot terminal.   Last resort: Zerodha's kill switch / Kite app.
+The panic button closes **everything in the account**, not only this bot's trades.
+
+## Live mode (only after paper trading proves itself)
+`export LIVE_TRADING=YES_I_UNDERSTAND_THIS_USES_REAL_MONEY`, then `python bot.py --live` (also asks you to type YES). Keep `sets` small; `max_sets` (default 3) is a hard cap.
+
+## Honest limits
+* The backtest used **modelled** option prices; real spreads, slippage and expiry-day price swings can wipe out the small per-trade profit (about 3 points per leg of extra cost would erase it).
+* A stop-loss is not a guarantee: a jump past the stop fills at the next price (see `demo.py gap`).
+* Zerodha auto-squares MIS positions around 15:20; 15:15 leaves almost no time if a fill is slow - consider `--exit 15:00`.
+* Check broker/SEBI rules for API orders (e.g. static IP, algo registration). Keep the bot machine online; if the process dies, positions stay open - use `panic.py` or the Kite app.
+* Never put your API key/secret/token in a chat or in git (`.gitignore` already excludes `.env`, `.access_token`, `logs/`, `state/`).

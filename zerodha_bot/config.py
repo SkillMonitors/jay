@@ -1,4 +1,4 @@
-"""All settings in one place. Defaults are deliberately conservative. Change them with command-line flags or by editing here."""
+"""All settings in one place. Defaults match the strategy we tested: expiry-day 2-lot iron butterfly, 200-pt wings, 10% stop, exit 3:15 pm."""
 from dataclasses import dataclass
 
 
@@ -7,30 +7,33 @@ class Config:
     # --- what to trade ---
     underlying: str = "NIFTY"
     spot_symbol: str = "NSE:NIFTY 50"
-    strike_step: int = 50          # Nifty strikes are 50 apart
-    strike_offset: int = 0         # 0 = at-the-money; +50 = one strike above the open, etc.
-    lots: int = 1
-    max_lots: int = 2              # hard cap - the bot refuses to trade more than this
-    expiry_only: bool = True       # only trade on the nearest expiry day
-    product: str = "MIS"           # MIS = intraday (auto square-off by broker), NRML = carry
+    strike_step: int = 50
+    wing_points: int = 200         # distance of the protective wings; 0 = plain short straddle (NOT recommended: unlimited loss)
+    wing_style: str = "otm"        # "otm": buy call K+200 & put K-200 (standard iron fly)   "itm": buy call K-200 & put K+200 (your screenshot) - same payoff, more cash, less margin
+    sets: int = 1                  # a SET = lots_per_set lots of every leg. Start with 1 and paper trade.
+    lots_per_set: int = 2          # your structure: 2 lots on each of the 4 legs
+    max_sets: int = 3              # hard cap - the bot refuses more (raise it deliberately)
+    expiry_only: bool = True
+    product: str = "MIS"
 
-    # --- when ---
-    entry_time: str = "09:16"      # IST (09:15 is the opening auction; the first minute has wide spreads)
-    exit_time: str = "14:15"       # IST, forced time exit
+    # --- when (IST) ---
+    entry_time: str = "09:16"
+    exit_time: str = "15:15"       # square-off. Zerodha auto-squares MIS ~15:20, so leave a margin or use an earlier time such as 15:00
 
     # --- risk ---
-    stop_loss_pct: float = 10.0    # exit both legs if the COMBINED premium rises this % above entry
-    max_daily_loss: float = 5000.0 # rupees; exit everything if mark-to-market loss reaches this
-    max_order_qty: int = 1800      # slice larger orders (Nifty exchange freeze limit is 1800 qty)
+    stop_loss_pct: float = 10.0    # exit all legs when the cost to close rises by this % of the premium collected on the short ATM legs
+    max_daily_loss: float = 15000.0  # rupees, for the WHOLE position; exit everything if the mark-to-market loss reaches this
+    max_order_qty: int = 1800
 
     # --- execution ---
     poll_seconds: float = 2.0
-    order_buffer_pct: float = 1.0  # how far through the spread a "marketable" limit order is placed
+    order_buffer_pct: float = 1.0
     fill_timeout_s: float = 20.0
     exit_retries: int = 5
 
-    # --- safety / ops ---
+    # --- ops ---
     paper: bool = True             # DEFAULT: nothing is sent to the exchange
-    dashboard_port: int = 8765     # local-only web page with the panic button (127.0.0.1)
+    dashboard_port: int = 8765
     state_dir: str = "state"
-    tag: str = "straddlebot"
+    tag: str = "flybot"
+    est_cost_per_set: float = 800.0  # rupees per set per expiry, used in the paper journal so results compare with the backtest
