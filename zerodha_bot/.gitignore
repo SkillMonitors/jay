@@ -1,0 +1,7 @@
+.env
+.access_token
+state/
+__pycache__/
+*.pyc
+logs/
+PANIC
