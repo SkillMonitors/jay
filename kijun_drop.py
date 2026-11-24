@@ -1,8 +1,9 @@
 """Nifty 50 daily, last 10y. Kijun-sen = 50% (midpoint) of the last-26-day high/low range.
 Event: a single candle closes at least X% below the previous close AND crosses from above the Kijun to below it.
 Question: does price later recover (High) back up to that 50% level, and how fast?"""
-import numpy as np, pandas as pd
-df = pd.read_csv("mk_nifty_50.csv", index_col=0); df.index = pd.to_datetime(df.index.astype(str).str[:10]); df = df[~df.index.duplicated()]
+import numpy as np, pandas as pd, sys
+NAME = sys.argv[1] if len(sys.argv) > 1 else "nifty_50"
+df = pd.read_csv(f"mk_{NAME}.csv", index_col=0); df.index = pd.to_datetime(df.index.astype(str).str[:10]); df = df[~df.index.duplicated()]
 K = ((df.High.rolling(26).max() + df.Low.rolling(26).min()) / 2).values
 O, H, L, C = (df[c].values for c in ("Open","High","Low","Close")); N = len(df)
 start = np.searchsorted(df.index.values, (df.index.max() - pd.DateOffset(years=10)).to_datetime64())
@@ -30,4 +31,4 @@ for th in (1.0, 1.5, 2.0, 3.0):
     print(f"  recovered to the (moving) Kijun: {len(td)} ({100*len(td)/len(r):.0f}%)")
     if len(t): print(f"  days to recover: avg {t.mean():.1f}, median {t.median():.0f}, p90 {t.quantile(.9):.0f}, max {t.max():.0f} | within 5d {100*(t<=5).sum()/len(r):.0f}%, 10d {100*(t<=10).sum()/len(r):.0f}%, 20d {100*(t<=20).sum()/len(r):.0f}%")
     print(f"  distance from drop close up to the 50% level: avg {r.to_level.mean():.2f}% | further fall after the drop before recovery/60d: avg {r.worst_before.mean():.1f}%, worst {r.worst_before.min():.1f}%")
-    if th in (2.0,): print(r.to_string(index=False)); r.to_csv("kijun_drop_events_2pct.csv", index=False)
+    if th in (2.0,): print(r.to_string(index=False)); r.to_csv(f"kijun_drop_events_2pct_{NAME}.csv", index=False)
