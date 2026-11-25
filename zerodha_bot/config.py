@@ -24,6 +24,10 @@ class Config:
     stop_loss_pct: float = 10.0    # exit all legs when the cost to close rises by this % of the premium collected on the short ATM legs
     max_daily_loss: float = 15000.0  # rupees, for the WHOLE position; exit everything if the mark-to-market loss reaches this
     max_order_qty: int = 1800
+    # ACCOUNT-LEVEL KILL SWITCH: if the whole account's loss for the day reaches this % of `capital`, cancel all orders and close ALL positions
+    capital: float = 1_000_000.0   # your trading capital in rupees (Rs10 lakh); the 2% base. Change it to your real number.
+    max_daily_loss_pct: float = 2.0
+    account_check_seconds: float = 5.0
 
     # --- execution ---
     poll_seconds: float = 2.0

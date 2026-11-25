@@ -75,6 +75,10 @@ class KiteBroker:
         return [dict(symbol=p["tradingsymbol"], exchange=p["exchange"], quantity=int(p["quantity"]), product=p["product"], pnl=float(p.get("pnl", 0)))
                 for p in self.kite.positions()["net"]]
 
+    def day_pnl(self):
+        """Today's profit/loss across ALL positions in the account (realised + unrealised). Uses Kite's m2m (day mark-to-market) when present, else pnl."""
+        return float(sum(float(p.get("m2m", p.get("pnl", 0)) or 0) for p in self.kite.positions()["net"]))
+
 
 class PaperBroker:
     """Simulated broker: fills instantly at the touch (BUY at ask, SELL at bid - conservative). Quote data comes from `source`
@@ -105,6 +109,7 @@ class PaperBroker:
     def cancel(self, oid):
         if self.orders[oid]["status"] == "OPEN": self.orders[oid]["status"] = "CANCELLED"
     def open_orders(self): return [o for o, d in self.orders.items() if d["status"] == "OPEN"]
+    def day_pnl(self): return float(sum(p["pnl"] for p in self.positions()))
     def positions(self):
         try: qs = self.src.quotes([s for s in self.pos]) if self.pos else {}
         except Exception: qs = {}                                         # real Kite positions() does not depend on the quote feed either

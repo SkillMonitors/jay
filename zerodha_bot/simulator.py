@@ -30,3 +30,12 @@ calm = lambda m: 100 - 0.01 * m                                      # slow thet
 spike = lambda m: 100 - 0.01 * m if m < 120 else 98.8 + 1.0 * (m - 120)   # from 11:15 premiums climb 1 pt/min -> stop is crossed gradually
 gap = lambda m: 100 - 0.01 * m if m < 120 else 140                    # instant jump: shows gap risk
 crawl = lambda m: 100 + 0.05 * m                                     # steady loss -> max-daily-loss path
+
+
+from broker import PaperBroker
+
+
+class LossyPaper(PaperBroker):
+    """Paper broker whose account ALSO carries an outside loss (e.g. a manual trade) set via `.extra`, so the account-wide 2% limit can be tested."""
+    def __init__(self, *a, **k): super().__init__(*a, **k); self.extra = 0.0
+    def day_pnl(self): return super().day_pnl() + self.extra

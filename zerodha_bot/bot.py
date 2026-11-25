@@ -55,6 +55,20 @@ class Bot:
             self.panic.set()
         return self.panic.is_set()
 
+    def _account_limit(self): return self.cfg.capital * self.cfg.max_daily_loss_pct / 100
+
+    def _account_breached(self):
+        """True if the WHOLE account's loss today has reached max_daily_loss_pct of capital."""
+        try: d = self.b.day_pnl()
+        except Exception as e: self.log(f"day P&L check failed: {e}"); return False
+        self.status["account_day_pnl"] = round(d)
+        if d <= -self._account_limit():
+            self.log(f"!!! ACCOUNT DAILY LOSS LIMIT HIT: day P&L Rs{d:,.0f} <= -Rs{self._account_limit():,.0f} ({self.cfg.max_daily_loss_pct}% of Rs{self.cfg.capital:,.0f}) - CLOSING ALL POSITIONS")
+            return True
+        return False
+
+    def _lockfile(self): return os.path.join(self.cfg.state_dir, f"locked_{self.now().date()}")
+
     def _guard_once_per_day(self):
         f = os.path.join(self.cfg.state_dir, f"traded_{self.now().date()}.json")
         if os.path.exists(f): raise SystemExit(f"Already traded today ({f}). Delete it only if you are sure no position is open.")
@@ -104,7 +118,8 @@ class Bot:
         c = self.cfg
         if c.sets > c.max_sets: raise SystemExit(f"sets={c.sets} exceeds max_sets={c.max_sets} (raise max_sets deliberately if you mean it)")
         guard = self._guard_once_per_day()
-        self.log(f"start | {'PAPER' if c.paper else '*** LIVE ***'} | {c.sets} set(s) x {c.lots_per_set} lots | wings {c.wing_style} {c.wing_points} | stop {c.stop_loss_pct}% | max loss Rs{c.max_daily_loss:.0f} | entry {c.entry_time} exit {c.exit_time}")
+        if os.path.exists(self._lockfile()) or self._account_breached(): return self._finish("account_loss_limit_already_hit", [], [], 0)    # no new trades after the limit was hit today
+        self.log(f"start | account daily-loss limit Rs{self._account_limit():,.0f} ({c.max_daily_loss_pct}% of Rs{c.capital:,.0f}) | {'PAPER' if c.paper else '*** LIVE ***'} | {c.sets} set(s) x {c.lots_per_set} lots | wings {c.wing_style} {c.wing_points} | stop {c.stop_loss_pct}% | max loss Rs{c.max_daily_loss:.0f} | entry {c.entry_time} exit {c.exit_time}")
         while self.now() < self._t(c.entry_time):
             if self._panic_requested(): self.log("PANIC before entry - nothing to close"); return self._finish("panic_before_entry", [], [], 0)
             self.status = dict(state="waiting for entry"); self.sleep(1)
@@ -132,8 +147,13 @@ class Bot:
             stop_level = v0 + c.stop_loss_pct / 100 * gross; entry_time = self.now()
             self._write(guard, dict(v0=v0, gross=gross, K=K, shorts=shorts, longs=longs, qty=qty))
             self.log(f"ENTRY net credit {v0:.2f} pts (Rs{v0*qty:,.0f}) | gross short premium {gross:.2f} | STOP when cost-to-close >= {stop_level:.2f} | max loss Rs{c.max_daily_loss:.0f}")
-            bad = 0; syms = shorts + longs
+            bad = 0; syms = shorts + longs; last_acct = self.now().timestamp()
             while True:
+                if self.now().timestamp() - last_acct >= c.account_check_seconds:
+                    last_acct = self.now().timestamp()
+                    if self._account_breached():
+                        open(self._lockfile(), "w").close(); ok = square_off_all(self.b, self.log, c.max_order_qty, c.order_buffer_pct, sleep=self.sleep)
+                        return self._finish("account_loss_limit" if ok else "account_loss_limit_NOT_FLAT", shorts, longs, qty, K, v0, entry_time)
                 if self._panic_requested():
                     self.log("!!! PANIC !!! cancelling all orders and closing ALL positions"); ok = square_off_all(self.b, self.log, c.max_order_qty, c.order_buffer_pct, sleep=self.sleep)
                     return self._finish("panic" if ok else "panic_NOT_FLAT", shorts, longs, qty, K, v0, entry_time)

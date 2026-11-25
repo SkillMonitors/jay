@@ -11,11 +11,12 @@ Exit everything (shorts bought back first, then wings sold) on the first of: **s
 
 ## Try it right now with NO Zerodha account
 ```
-python -m unittest discover -s tests -v     # 16 offline safety tests
+python -m unittest discover -s tests -v     # 22 offline safety tests
 python demo.py            # simulated calm expiry day, exits 3:15
 python demo.py stop       # stop-loss firing
 python demo.py panic      # you press PANIC at 11:30 - shorts bought back before wings are sold
 python demo.py gap        # market jumps through the stop: the loss is bigger than 10% (gap risk)
+python demo.py account    # account loses 2% of capital elsewhere -> everything closed, no more trades that day
 ```
 
 ## Real paper trading (real quotes, fake orders)
@@ -31,6 +32,11 @@ python summary.py                                     # after several expiries: 
 Every trade is appended to `logs/paper_journal.csv` (centre strike, net credit, reason, gross P&L, estimated costs, est. net).
 **Go/no-go rule:** after at least 20-30 expiries compare `python summary.py` with the backtest (~Rs2,700 net per set per expiry, 53-58% wins). If your paper average is far below that, real spreads/slippage are eating the edge - do NOT go live.
 
+## 2% daily account loss limit (kill switch)
+If your **whole account's** loss for the day (all positions, realised + unrealised) reaches **2% of `capital`** (default Rs10,00,000 -> Rs20,000), the bot **cancels all orders and closes ALL positions**, refuses to trade again that day, and exits. Change `capital` and `max_daily_loss_pct` in `config.py` (set `capital` to your real trading capital).
+There is also a separate **guard** you can run in a second terminal so it protects even your *manual* trades: `python guard.py` (add `--capital 1000000 --pct 2`). After the limit trips it keeps watching until 15:30 and closes anything you open afterwards (`--no-lockout` to disable).
+Two limits work together: the bot's own `max_daily_loss` (Rs15,000 for its own position) and this account-wide 2%. Whichever hits first closes everything. Test it: `python demo.py account`.
+
 ## Four ways to PANIC (cancel orders, buy back shorts first, then sell wings, retry until verified flat)
 1. Browser: http://127.0.0.1:8765 (local only) - big red button + live status.  2. `touch PANIC` in the bot folder.
 3. `python panic.py` (type PANIC) or `--yes` - works even if the bot crashed.  4. Ctrl+C in the bot terminal.   Last resort: Zerodha's kill switch / Kite app.
@@ -40,6 +46,7 @@ The panic button closes **everything in the account**, not only this bot's trade
 `export LIVE_TRADING=YES_I_UNDERSTAND_THIS_USES_REAL_MONEY`, then `python bot.py --live` (also asks you to type YES). Keep `sets` small; `max_sets` (default 3) is a hard cap.
 
 ## Honest limits
+* The 2% limit is checked every ~5 seconds from Zerodha's P&L; a sudden gap can take you past 2% before it trips, and it uses the P&L figure Zerodha reports (it excludes brokerage and taxes).
 * The backtest used **modelled** option prices; real spreads, slippage and expiry-day price swings can wipe out the small per-trade profit (about 3 points per leg of extra cost would erase it).
 * A stop-loss is not a guarantee: a jump past the stop fills at the next price (see `demo.py gap`).
 * Zerodha auto-squares MIS positions around 15:20; 15:15 leaves almost no time if a fill is slow - consider `--exit 15:00`.
