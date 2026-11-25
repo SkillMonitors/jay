@@ -1,0 +1,112 @@
+date,dir,cloud,res,days,cal,free60,above_tk,above_kj,thick,index
+2011-12-02,up,red,hit,1,3.0,1.0,True,True,1.8318777666233803,Nifty 50
+2012-01-17,up,red,fail,1,,2.0,True,True,1.2496743841313749,Nifty 50
+2012-01-19,up,red,hit,1,1.0,1.0,True,True,1.294489234587212,Nifty 50
+2012-06-20,up,red,hit,3,5.0,3.0,True,True,1.839399703591705,Nifty 50
+2013-04-22,up,red,hit,2,3.0,2.0,True,True,1.1205073190719343,Nifty 50
+2015-06-22,up,red,fail,5,,7.0,True,True,3.11590804031157,Nifty 50
+2015-06-30,up,red,hit,1,1.0,1.0,True,True,1.8911701409116028,Nifty 50
+2015-10-06,up,red,hit,1,1.0,1.0,True,True,0.3806939620015142,Nifty 50
+2016-03-09,up,red,fail,1,,7.0,True,True,1.3363326821447037,Nifty 50
+2016-03-14,up,red,fail,1,,4.0,True,True,1.0495755653084065,Nifty 50
+2017-01-05,up,red,hit,5,7.0,5.0,True,True,2.46410066320278,Nifty 50
+2018-04-16,up,red,hit,8,10.0,8.0,True,True,1.2820134068822735,Nifty 50
+2018-11-27,up,red,hit,4,6.0,4.0,True,True,2.824478840992742,Nifty 50
+2019-09-20,up,red,hit,1,3.0,1.0,True,True,2.1218787086563182,Nifty 50
+2020-04-30,up,red,fail,1,,20.0,True,True,4.004097741225754,Nifty 50
+2020-05-08,up,red,fail,6,,15.0,False,True,8.39539481350997,Nifty 50
+2020-05-20,up,red,fail,2,,7.0,False,False,9.47135611919975,Nifty 50
+2020-05-27,up,red,hit,3,5.0,3.0,True,False,9.633978172060225,Nifty 50
+2022-01-25,up,red,fail,1,,4.0,False,False,1.966738108883817,Nifty 50
+2022-01-31,up,red,hit,1,1.0,1.0,False,False,2.2300482439575657,Nifty 50
+2022-07-19,up,red,hit,3,3.0,3.0,True,True,4.041482070790272,Nifty 50
+2023-04-11,up,red,hit,8,13.0,8.0,True,True,0.8614841073515029,Nifty 50
+2023-11-15,up,red,hit,1,1.0,1.0,True,True,0.4394430916543162,Nifty 50
+2024-12-13,up,red,fail,2,,,True,True,1.9397785885909804,Nifty 50
+2025-01-02,up,red,fail,2,,57.0,True,True,3.333017349223297,Nifty 50
+2025-03-21,up,red,hit,2,4.0,2.0,True,True,2.0354559297656585,Nifty 50
+2025-04-02,up,red,fail,2,,7.0,False,True,2.36656531473746,Nifty 50
+2025-04-11,up,red,hit,1,4.0,1.0,True,True,1.747973899870793,Nifty 50
+2025-09-11,up,red,hit,1,1.0,1.0,True,True,0.2989322817730099,Nifty 50
+2025-10-01,up,red,hit,2,5.0,2.0,False,False,0.8159915245027085,Nifty 50
+2026-04-29,up,red,fail,1,,5.0,False,True,2.10535104047942,Nifty 50
+2026-05-04,up,red,hit,3,3.0,3.0,False,True,2.6284949763877186,Nifty 50
+2026-05-13,up,red,fail,11,,24.0,False,False,3.6792151094525343,Nifty 50
+2026-06-15,up,red,hit,2,2.0,2.0,True,True,1.1240341083501724,Nifty 50
+2026-11-03,up,red,hit,1,1.0,1.0,True,True,1.6559177534860314,Nifty 50
+2012-01-19,up,red,hit,1,1.0,1.0,True,True,1.227776314175926,Sensex
+2012-06-19,up,red,hit,2,2.0,2.0,True,True,1.5593732688400594,Sensex
+2013-04-25,up,red,fail,1,,3.0,True,True,1.1568080575610231,Sensex
+2013-04-29,up,red,hit,1,1.0,1.0,True,True,0.6177692819148937,Sensex
+2013-08-13,up,red,fail,2,,18.0,True,False,1.3462658437539805,Sensex
+2015-06-22,up,red,hit,7,9.0,7.0,True,True,3.0212176926845635,Sensex
+2015-10-06,up,red,hit,1,1.0,1.0,True,True,0.4434073128113978,Sensex
+2016-03-09,up,red,fail,1,,7.0,True,True,1.374214345290105,Sensex
+2016-03-11,up,red,fail,2,,5.0,True,True,1.355944015662302,Sensex
+2017-01-03,up,red,hit,8,10.0,8.0,True,True,3.0474427766951617,Sensex
+2018-04-16,up,red,hit,8,10.0,8.0,True,True,1.3359338615994416,Sensex
+2018-11-27,up,red,hit,3,3.0,3.0,True,True,2.782286024407339,Sensex
+2019-09-20,up,red,hit,1,3.0,1.0,True,True,1.7371733922689905,Sensex
+2020-04-30,up,red,fail,1,,21.0,True,True,3.775007643328189,Sensex
+2020-05-08,up,red,fail,6,,16.0,False,True,7.935933459176936,Sensex
+2020-05-21,up,red,fail,1,,7.0,False,False,9.246579905030073,Sensex
+2020-05-27,up,red,hit,4,6.0,4.0,True,False,9.564014932016832,Sensex
+2022-01-25,up,red,fail,1,,4.0,False,False,1.8367895457681185,Sensex
+2022-01-31,up,red,hit,1,1.0,1.0,False,False,2.0946946018308563,Sensex
+2022-07-19,up,red,hit,3,3.0,3.0,True,True,4.028341049766302,Sensex
+2023-02-14,up,red,hit,2,2.0,2.0,True,True,0.9270055623117872,Sensex
+2023-03-06,up,red,fail,2,,23.0,True,True,1.841321223947236,Sensex
+2024-12-05,up,red,hit,6,8.0,6.0,True,True,1.0889587551344684,Sensex
+2025-01-02,up,red,fail,2,,,True,True,3.0346718565162303,Sensex
+2025-03-24,up,red,fail,5,,13.0,True,True,2.2581043620412378,Sensex
+2025-09-15,up,red,hit,1,1.0,1.0,True,True,0.6132162209278722,Sensex
+2025-10-06,up,red,hit,1,1.0,1.0,True,True,0.8989161950820196,Sensex
+2026-05-05,up,red,fail,4,,33.0,False,True,3.0641383884830997,Sensex
+2026-05-25,up,red,fail,3,,19.0,True,False,4.33399192510112,Sensex
+2026-06-16,up,red,hit,4,6.0,4.0,True,True,1.7881784898212223,Sensex
+2026-06-24,up,red,hit,1,1.0,1.0,True,True,0.7238497978056752,Sensex
+2026-11-02,up,red,hit,1,1.0,1.0,True,True,1.6061688924265811,Sensex
+2012-01-17,up,red,hit,2,2.0,2.0,True,True,1.995762697700608,Bank Nifty
+2012-06-12,up,red,fail,2,,4.0,True,True,3.514332377786902,Bank Nifty
+2012-06-15,up,red,hit,1,3.0,1.0,True,True,1.9769404411161853,Bank Nifty
+2012-06-20,up,red,hit,1,1.0,1.0,False,True,2.3454515168861247,Bank Nifty
+2013-04-17,up,red,hit,1,1.0,1.0,True,True,2.0003472280240726,Bank Nifty
+2013-09-18,up,red,hit,2,2.0,2.0,True,True,8.611698467406665,Bank Nifty
+2013-09-25,up,red,fail,2,,8.0,False,True,7.557377174628264,Bank Nifty
+2013-10-01,up,red,hit,4,7.0,4.0,False,True,6.846779491801739,Bank Nifty
+2014-03-05,up,red,hit,1,1.0,1.0,True,True,3.169147213007178,Bank Nifty
+2015-05-27,up,red,fail,1,,25.0,True,True,3.399146176457357,Bank Nifty
+2015-05-29,up,red,fail,2,,23.0,True,True,3.456815940941424,Bank Nifty
+2015-06-22,up,red,hit,7,9.0,7.0,True,True,4.724291870346887,Bank Nifty
+2015-10-13,up,red,hit,2,2.0,2.0,True,True,1.7596299455623627,Bank Nifty
+2015-11-06,up,red,fail,2,,13.0,False,False,2.6349026803872944,Bank Nifty
+2015-11-16,up,red,fail,2,,9.0,True,False,2.425089806196824,Bank Nifty
+2015-11-19,up,red,fail,2,,6.0,True,False,2.441141630646943,Bank Nifty
+2015-11-27,up,red,hit,1,3.0,1.0,True,True,0.8858897072001723,Bank Nifty
+2016-03-18,up,red,hit,1,3.0,1.0,True,True,4.409176818834719,Bank Nifty
+2017-01-12,up,red,hit,2,4.0,2.0,True,True,2.1147545258624705,Bank Nifty
+2018-04-23,up,red,fail,2,,7.0,True,True,3.869040981926787,Bank Nifty
+2018-04-26,up,red,hit,4,7.0,4.0,True,True,4.166234238024811,Bank Nifty
+2018-11-14,up,red,hit,2,2.0,2.0,True,True,2.640701201703465,Bank Nifty
+2019-10-09,up,red,hit,7,9.0,7.0,False,True,4.531262138820784,Bank Nifty
+2020-06-02,up,red,fail,9,,22.0,True,True,16.94923836474888,Bank Nifty
+2020-06-16,up,red,hit,12,16.0,12.0,False,True,17.718277968150225,Bank Nifty
+2022-01-07,up,red,hit,3,5.0,3.0,True,True,2.6834895953334827,Bank Nifty
+2022-07-07,up,red,fail,4,,9.0,True,True,2.9158557147486626,Bank Nifty
+2022-07-18,up,red,hit,2,2.0,2.0,True,True,2.930436032416439,Bank Nifty
+2023-03-08,up,red,fail,1,,22.0,True,True,0.9899106873919672,Bank Nifty
+2023-04-06,up,red,fail,1,,3.0,True,True,1.8671282033515264,Bank Nifty
+2023-04-11,up,red,hit,1,1.0,1.0,True,True,1.2031762756397084,Bank Nifty
+2023-09-25,up,red,fail,1,,45.0,False,False,0.4147359862312111,Bank Nifty
+2023-10-12,up,red,fail,1,,33.0,True,False,0.9049218319940756,Bank Nifty
+2023-11-29,up,red,fail,1,,2.0,True,True,0.897450708041214,Bank Nifty
+2024-10-08,up,red,hit,1,1.0,1.0,False,False,1.0926356457390094,Bank Nifty
+2024-12-23,up,red,fail,2,,,False,False,1.882031597650233,Bank Nifty
+2024-12-27,up,red,fail,1,,59.0,False,False,1.882262702089642,Bank Nifty
+2025-01-02,up,red,fail,1,,55.0,True,False,1.841712309745023,Bank Nifty
+2025-03-19,up,red,hit,3,5.0,3.0,True,True,2.443708932489544,Bank Nifty
+2025-10-03,up,red,hit,1,3.0,1.0,True,True,0.8022659647548761,Bank Nifty
+2026-05-06,up,red,fail,4,,26.0,True,True,2.7750252265188227,Bank Nifty
+2026-05-14,up,red,fail,1,,20.0,False,False,3.5616826024024952,Bank Nifty
+2026-05-22,up,red,fail,4,,14.0,True,False,3.4543765541252927,Bank Nifty
+2026-06-09,up,red,hit,3,3.0,3.0,True,True,1.7934765069436267,Bank Nifty
