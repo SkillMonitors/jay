@@ -56,6 +56,11 @@ class T(unittest.TestCase):
         self.assertEqual([x[1] for x in entry], ["BUY", "BUY", "SELL", "SELL"], "risk must be capped by the wings before any short is sold")
         self.assertEqual({x[0] for x in entry[:2]}, {"NIFTY21200CE", "NIFTY20800PE"})
 
+    def test_plain_atm_straddle_with_10pct_stop(self):
+        sim, b, bot, logs = self.mk(spike, wing_points=0, lots_per_set=1); r = bot.run()
+        self.assertEqual(r["reason"], "stop_loss"); self.assertTrue(self.flat(b)); self.assertEqual({x[0] for x in b.placed_log[:2]}, {"NIFTY21000CE", "NIFTY21000PE"})
+        self.assertTrue(all(x[1] == "SELL" for x in b.placed_log[:2])); self.assertTrue(any("qty 65 per leg" in l for l in logs))
+
     def test_itm_wing_style(self):
         sim, b, bot, logs = self.mk(calm, wing_style="itm"); bot.run(); self.assertEqual({x[0] for x in b.placed_log[:2]}, {"NIFTY20800CE", "NIFTY21200PE"})
 

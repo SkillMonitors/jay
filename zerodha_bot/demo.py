@@ -3,6 +3,7 @@
    python demo.py stop       premiums climb -> stop-loss fires
    python demo.py panic      you hit PANIC at 11:30 -> everything closed, shorts first
    python demo.py gap        market jumps through the stop (shows gap risk)
+   python demo.py straddle   plain at-the-money SELL straddle (no wings), 1 lot, 10% stop-loss
    python demo.py account    a loss elsewhere pushes the whole account past -2% of capital -> everything is closed"""
 import os, sys, tempfile
 from bot import Bot
@@ -11,8 +12,8 @@ from config import Config
 from simulator import Sim, LossyPaper, calm, spike, gap, crawl
 
 which = sys.argv[1] if len(sys.argv) > 1 else "calm"
-os.chdir(tempfile.mkdtemp()); sim = Sim({"calm": calm, "stop": spike, "panic": calm, "gap": gap, "account": calm}[which]); b = LossyPaper(sim) if which == "account" else PaperBroker(sim)
-bot = Bot(b, Config(), now_fn=sim.now, sleep_fn=sim.sleep, log=lambda m: print(m) if not m.endswith("quote error") else None)
+os.chdir(tempfile.mkdtemp()); sim = Sim({"calm": calm, "stop": spike, "panic": calm, "gap": gap, "account": calm, "straddle": spike}[which]); b = LossyPaper(sim) if which == "account" else PaperBroker(sim)
+bot = Bot(b, Config(wing_points=0, lots_per_set=1) if which == "straddle" else Config(), now_fn=sim.now, sleep_fn=sim.sleep, log=lambda m: print(m) if not m.endswith("quote error") else None)
 if which == "panic":
     orig = sim.sleep
     def sleeper(s):

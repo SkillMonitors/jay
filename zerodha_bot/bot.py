@@ -201,10 +201,10 @@ def start_dashboard(bot: Bot, port: int):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--live", action="store_true"); ap.add_argument("--sets", type=int); ap.add_argument("--wing", type=int); ap.add_argument("--style", choices=["otm", "itm"])
+    ap = argparse.ArgumentParser(); ap.add_argument("--live", action="store_true"); ap.add_argument("--sets", type=int); ap.add_argument("--lots-per-set", type=int); ap.add_argument("--wing", type=int); ap.add_argument("--style", choices=["otm", "itm"])
     ap.add_argument("--sl", type=float); ap.add_argument("--max-loss", type=float); ap.add_argument("--entry"); ap.add_argument("--exit"); ap.add_argument("--any-day", action="store_true"); ap.add_argument("--product")
     a = ap.parse_args(); cfg = Config(paper=not a.live)
-    for k, v in (("sets", a.sets), ("wing_points", a.wing), ("wing_style", a.style), ("stop_loss_pct", a.sl), ("max_daily_loss", a.max_loss), ("entry_time", a.entry), ("exit_time", a.exit), ("product", a.product)):
+    for k, v in (("sets", a.sets), ("lots_per_set", a.lots_per_set), ("wing_points", a.wing), ("wing_style", a.style), ("stop_loss_pct", a.sl), ("max_daily_loss", a.max_loss), ("entry_time", a.entry), ("exit_time", a.exit), ("product", a.product)):
         if v is not None: setattr(cfg, k, v)
     if a.any_day: cfg.expiry_only = False
     if not cfg.paper and input(f"LIVE MODE with REAL MONEY: {cfg.sets} set(s), stop {cfg.stop_loss_pct}%. Type YES to continue: ") != "YES": sys.exit("aborted")

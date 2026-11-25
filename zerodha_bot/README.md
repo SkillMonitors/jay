@@ -9,6 +9,9 @@ On every Nifty **expiry day** (Tuesday weekly expiry from Sep 2025), at ~09:16:
 Size = `sets` x 2 lots on every leg (1 set = 2 lots = 130 qty at lot 65). **Start with 1 set.**
 Exit everything (shorts bought back first, then wings sold) on the first of: **stop-loss** (cost to close rises 10% of the premium collected on the short legs) - **max daily loss** (Rs15,000 default) - **time exit 15:15** - **PANIC** - **data failure** (10 missed price updates, uses a market order). If an entry order fails part-way, everything already filled is closed and the bot stops.
 
+## Plain at-the-money SELL straddle with a 10% stop (no wings)
+`python bot.py --wing 0 --lots-per-set 1 --sets 1 --sl 10` sells the ATM call and put at 09:16 and buys both back if the combined premium rises 10% above what you collected, at 15:15, on PANIC, or on the 2% account limit. **No wings = unlimited loss on a gap and a large margin requirement**; the stop-loss can fill worse than 10%. Paper trade it first (`python demo.py straddle` shows it on a simulated day).
+
 ## Try it right now with NO Zerodha account
 ```
 python -m unittest discover -s tests -v     # 22 offline safety tests
