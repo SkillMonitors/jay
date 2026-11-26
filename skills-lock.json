@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "skills": {
+    "Google Flights Fare Search": {
+      "source": "agentskillexchange/skills",
+      "commit": "5cd4154304788771e407ba7e01ce31b9cb987bea",
+      "sourceType": "github",
+      "skillPath": "skills/google-flights-fare-search/SKILL.md",
+      "computedHash": "77bf5b99cdd28e71e471ab1ef0671a00b8fd7468960bcf2c5087f15372d9d42d"
+    }
+  }
+}
