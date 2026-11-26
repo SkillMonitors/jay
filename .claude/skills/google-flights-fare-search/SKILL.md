@@ -1,21 +1,28 @@
 ---
-name: google-flights-fare-search
-description: Search Google Flights by route and date through the Apify Google Flights Actor (johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search) and get one JSON row per flight with price, airlines, times, stops, layovers and duration, plus route price insights. Use when an agent needs airfare data for a route, a fare comparison, or flight results as JSON or CSV.
+name: "Google Flights Fare Search"
+slug: "google-flights-fare-search"
+description: "Search Google Flights by route and date through the Apify Google Flights Actor (johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search) and get one JSON row per flight with price, airlines, times, stops, layovers and duration, plus route price insights. Use when an agent needs airfare data for a route, a fare comparison, or flight results as JSON or CSV."
+verification: "listed"
+source: "https://github.com/johnisanerd/claude-skill-google-flights-api"
+category: "Research & Scraping"
+framework: "Claude Code"
+tool_ecosystem:
+  github_repo: "johnisanerd/claude-skill-google-flights-api"
 ---
 
 # Google Flights Fare Search
 
-Google has no public Flights API, so this skill gets fares through a hosted Apify Actor. Give it IATA airport codes and dates and it returns one dataset item per results page, with about 30 flights in an `all_flights` array. Each flight has `price`, `currency`, `airlines`, `departure_time`, `arrival_time`, `stops`, `layover_airports`, `duration_minutes`, `travel_class` and `flight_numbers`. Each page also carries `price_insights` (`lowest_price`, `price_level`, `typical_price_range`, and `price_history` when shown).
+Google has no public Flights API, so this skill gets fares through a hosted Apify Actor that searches Google Flights and returns structured results. Give it IATA airport codes and dates and it returns one dataset item per results page, with about 30 flights in an `all_flights` array. Each flight has `price`, `currency`, `airlines`, `departure_time`, `arrival_time`, `stops`, `layover_airports`, `duration_minutes`, `travel_class` and `flight_numbers`. Each page also carries `price_insights` (`lowest_price`, `price_level`, `typical_price_range`, and a `price_history` series when Google shows one).
 
-Supports one-way, round-trip and multi-city. Filters: max price, max stops (0 = nonstop), airlines, basic-economy exclusion. `currency`, `hl`, `gl` localize results. `max_pages` is the main cost driver.
+Use it for one-way, round-trip or multi-city searches. Filters cover maximum price, maximum stops (0 for nonstop), airlines and basic-economy exclusion. `currency`, `hl` and `gl` localize fares across 29 languages and 39 countries. `max_pages` controls how many result pages are fetched, and it is the main cost driver.
 
-Not for live flight status or booking.
+It is not for live flight status or tracking, and it does not book tickets. It returns booking tokens and, optionally, booking links.
 
-Requirements: an Apify account, authenticated via `apify login` or the `APIFY_TOKEN` env var. Runs are billed to that account (small per-run fee plus per-page fee).
+Requirements: an Apify account, authenticated with `apify login` or an `APIFY_TOKEN` environment variable. Runs are billed to that account: a small per-run fee plus a per-page fee.
 
 ## Example
 
-Dates must be in the future (YYYY-MM-DD).
+Flight dates must be in the future. Replace the two dates below with your own outbound and return dates (YYYY-MM-DD).
 
 ```bash
 apify actors call "johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search" \
@@ -23,11 +30,27 @@ apify actors call "johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search" \
   --output-dataset --silent
 ```
 
-Each item is one results page; flatten with `jq '[.[].all_flights[]]'` for one row per flight.
+`--output-dataset` prints the run's dataset items rather than the run details, and `max_pages: 1` keeps the run to one results page. Each item is one results page, so for one row per flight (or a flat CSV), flatten each item's `all_flights` array, for example by piping the output to `jq '[.[].all_flights[]]'`.
 
-MCP alternative: `https://mcp.apify.com/?tools=actors,docs,johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search`
+Agents can also call it over MCP with the hosted server `https://mcp.apify.com/?tools=actors,docs,johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search`.
+
+## Installation
+
+### Claude Code, Cursor and other skills-compatible agents
+
+```bash
+npx skills add johnisanerd/claude-skill-google-flights-api
+```
+
+### Direct repo/manual install
+
+```bash
+git clone https://github.com/johnisanerd/claude-skill-google-flights-api.git
+mkdir -p ~/.claude/skills
+cp -R claude-skill-google-flights-api/apify-google-flights-api ~/.claude/skills/apify-google-flights-api
+```
 
 ## Source
 
-- https://github.com/johnisanerd/claude-skill-google-flights-api
-- https://apify.com/johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search
+- Skill repo: https://github.com/johnisanerd/claude-skill-google-flights-api
+- Actor: https://apify.com/johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search
